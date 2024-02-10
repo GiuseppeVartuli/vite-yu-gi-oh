@@ -8,13 +8,20 @@ export default {
       cards: [],
     };
   },
+  computed: {
+    nCards() {
+      return this.cards.length ? this.cards.length : "";
+    },
+  },
   mounted() {
     console.log(this.base_api_url);
     axios
-      .get("https://db.ygoprodeck.com/api/v7/cardinfo.php")
+      .get("https://db.ygoprodeck.com/api/v7/cardinfo.php?num=20&offset=0")
       .then((response) => {
-        console.log(response);
-        console.log(response.data.data.name);
+        console.log(response.data.data);
+        this.cards = response.data.data;
+        console.log(response.data.data.length);
+        // console.log(response.data.data[0].name);
       });
   },
 };
@@ -25,16 +32,14 @@ export default {
     <div class="container">
       <div class="row">
         <div class="counter">
-          <p>Found -- cards</p>
+          <p>Found {{ nCards }} cards</p>
         </div>
-        <div class="card">
-          <img
-            src="https://www.cardtrader.com/uploads/blueprints/image/81905/show_blue-eyes-white-dragon-legendary-decks-ii-81905.png"
-            alt=""
-          />
+        <div class="card" v-for="card in cards">
+          <img :src="card.card_images[0].image_url" alt="" />
+
           <div class="container_text">
-            <p class="name">Drago Bianco Occhi Blue</p>
-            <p class="category">Drago</p>
+            <p class="name">{{ card.name }}</p>
+            <p class="category">{{ card.archetype }}</p>
           </div>
         </div>
       </div>
